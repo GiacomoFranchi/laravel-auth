@@ -62,12 +62,13 @@ class ProjectController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  Project $project
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Project $project)
     {
-        //
+        $project = Project::where('slug', $project->slug)->first();
+        return view('admin.projects.edit', compact('project'));
     }
 
     /**
@@ -77,9 +78,12 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Project $project)
     {
-        //
+        $form_data = $request->all();
+        $project_to_update = Project::where('slug', $project->slug)->first();
+        $project_to_update->update($form_data);
+        return redirect()->route('admin.projects.show', ['project' => $project_to_update->slug]);
     }
 
     /**
@@ -90,9 +94,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        $project = Project::where('slug', $project->slug);
+        $project = Project::where('slug', $project->slug)->first();
         $project->delete();
 
-        return redirect()->route('admin.projects.index')->with('message', 'Il progetto è stato rimosso');
+        return redirect()->route('admin.projects.index')->with('message', 'Il progetto "' . $project->title .'" è stato rimosso');
     }
 }

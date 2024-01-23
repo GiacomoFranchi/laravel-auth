@@ -34,8 +34,11 @@
                                 class="btn btn-primary">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                             </a>
-                        </td>
-                        <td>
+
+                            <a class="btn btn-warning" href="{{ route('admin.projects.edit', ['project' => $project->slug]) }}">
+                                <i class="fa-solid fa-pencil"></i>
+                              </a>
+
                             <form action="{{ route('admin.projects.destroy', ['project' => $project->slug]) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 @method('DELETE')
