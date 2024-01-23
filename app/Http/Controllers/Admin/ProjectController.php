@@ -28,7 +28,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.projects.create');
     }
 
     /**
@@ -39,18 +39,24 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $form_data = $request->all();
+        $project = new Project();
+        $project->fill($form_data);
+        $project->slug = Str::slug($project->title, '-');
+        $project->save();
+
+        return redirect()->route('admin.projects.show', ['project' => $project->slug]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  project  $project
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Project $project)
     {
-        //
+        return view('admin.projects.show', compact('project'));
     }
 
     /**
@@ -79,11 +85,14 @@ class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  project  $project
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Project $project)
     {
-        //
+        $project = Project::where('slug', $project->slug);
+        $project->delete();
+
+        return redirect()->route('admin.projects.index')->with('message', 'Il progetto è stato rimosso');
     }
 }
