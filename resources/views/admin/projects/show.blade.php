@@ -10,5 +10,6 @@
                 <p class="card-text">Descrizione: {{$project->content}}</p>
             </div>
         </div>
+        <a class="btn btn-primary my-2" href="{{ route('admin.projects.index') }}">Indietro</a>
     </div>
 @endsection
