@@ -4,6 +4,8 @@
     <div class="container mt-5">
         <h2 class="text-center">Aggiungi un nuovo progetto:</h2>
 
+        @include('admin.projects.partials.btn_indietro')
+
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>

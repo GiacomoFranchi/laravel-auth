@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -37,12 +38,11 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreProjectRequest $request)
     {
-        $form_data = $request->all();
+        $form_data = $request->validated();
         $project = new Project();
         $project->fill($form_data);
-        $project->slug = Str::slug($project->title, '-');
         $project->save();
 
         return redirect()->route('admin.projects.show', ['project' => $project->slug]);
@@ -67,7 +67,8 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        $project = Project::where('slug', $project->slug)->first();
+        //$project = Project::where('slug', $project->slug)->first();
+
         return view('admin.projects.edit', compact('project'));
     }
 
@@ -75,15 +76,15 @@ class ProjectController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  Project $project               
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Project $project)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-        $form_data = $request->all();
-        $project_to_update = Project::where('slug', $project->slug)->first();
-        $project_to_update->update($form_data);
-        return redirect()->route('admin.projects.show', ['project' => $project_to_update->slug]);
+        $form_data = $request->validated();
+        //$project_to_update = Project::where('slug', $project->slug)->first();
+        $project->update($form_data);
+        return redirect()->route('admin.projects.show', ['project' => $project->slug]);
     }
 
     /**
@@ -94,7 +95,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        $project = Project::where('slug', $project->slug)->first();
+        //$project = Project::where('slug', $project->slug)->first();
         $project->delete();
 
         return redirect()->route('admin.projects.index')->with('message', 'Il progetto "' . $project->title .'" è stato rimosso');
