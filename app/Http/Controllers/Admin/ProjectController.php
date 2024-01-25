@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -43,6 +44,13 @@ class ProjectController extends Controller
         $form_data = $request->validated();
         $project = new Project();
         $project->fill($form_data);
+
+        //controllo se c'è img e aggiungo al db
+        if($request->hasFile('img')){
+            $path = Storage::put('image', $request->img);
+            $project->img = $path;   
+        }
+
         $project->save();
 
         return redirect()->route('admin.projects.show', ['project' => $project->slug]);
@@ -83,6 +91,17 @@ class ProjectController extends Controller
     {
         $form_data = $request->validated();
         //$project_to_update = Project::where('slug', $project->slug)->first();
+
+        if($request->hasFile('img')) {
+            if($project->img) {
+                Storage::delete($project->img);
+            }
+
+            $path = Storage::put('image', $request->img);
+            $form_data['img'] = $path;
+        }
+
+
         $project->update($form_data);
         return redirect()->route('admin.projects.show', ['project' => $project->slug]);
     }
@@ -97,6 +116,7 @@ class ProjectController extends Controller
     {
         //$project = Project::where('slug', $project->slug)->first();
         $project->delete();
+        Storage::delete($project->cover_image);
 
         return redirect()->route('admin.projects.index')->with('message', 'Il progetto "' . $project->title .'" è stato rimosso');
     }

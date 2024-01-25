@@ -21,7 +21,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('admin.projects.update', ['project' => $project->slug]) }}" method="POST">
+                <form action="{{ route('admin.projects.update', ['project' => $project->slug]) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="mb-3">
@@ -29,6 +29,12 @@
                         <input type="text" class="form-control" id="title" name="title"
                             value="{{ old('title', $project->title) }}">
                     </div>
+
+                    <div class="mb-3">
+                        <label for="img">Immagine</label>
+                        <input type="file" class="form-control" id="img" name="img">
+                    </div>
+        
 
                     <div class="mb-3">
                         <label for="content" class="form-label">Descrizione:</label>
